@@ -141,42 +141,31 @@ def extract_answers(request):
         # For each selected choice, check if it is a correct answer or not
         # Calculate the total score
 def show_exam_result(request, course_id, submission_id):
-    # context = {}
-    
-    # course = Course.objects.get(id = course_id)
-    # context['course'] = course
-    
-    # submit = Submission.objects.get(id = submission_id).choices.all()
-    # context['choices'] = submit
-
-    # questions = Question.objects.filter(id=course_id)
-    # context['questions'] = questions
-
-
-    # # Calculate the submission score
-    # submission_score = 0
-    # max_score = 0
-    # for question in questions:
-    #     max_score += question.grade
-    #     if question.answered_correctly(submission_choices):
-    #         submission_score += question.grade
-    
-    # context['grade'] = round(submission_score /max_score * 100)
-    
-    # return  render(request, 'onlinecourse/exam_result_bootstrap.html', context)
     context = {}
+    
     course = Course.objects.get(id = course_id)
-    submit = Submission.objects.get(id = submission_id)
-    selected = Submission.objects.filter(id = submission_id).values_list('choices',flat = True)
-    score = 0
-    for i in submit.choices.all().filter(is_correct=True).values_list('question_id'):
-        score += Question.objects.filter(id=i[0]).first().grade    
-    context['selected'] = selected
-    context['grade'] = score
     context['course'] = course
+    
+    submit = Submission.objects.get(id = submission_id).choices.all()
+    context['choices'] = submit
+
     questions = Question.objects.filter(id=course_id)
     context['questions'] = questions
-    return  render(request, 'onlinecourse/exam_result_bootstrap.html', context) course_obj = Course.objects.get(id=course_id)
+
+
+    # Calculate the submission score
+    submission_score = 0
+    max_score = 0
+    for question in questions:
+        max_score += question.grade
+        if question.answered_correctly(submission_choices):
+            submission_score += question.grade
+    
+    context['grade'] = round(submission_score /max_score * 100)
+    
+    return  render(request, 'onlinecourse/exam_result_bootstrap.html', context)
+
+
 
 
 
